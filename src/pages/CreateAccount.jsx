@@ -40,7 +40,7 @@ const CreateAccount = () => {
   
     try {
       // Submit account data to the backend
-      const response = await fetch("http://localhost:9874/api/posts/register", {
+      const response = await fetch("https://social-media-backend-2-xdnp.onrender.com/api/posts/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

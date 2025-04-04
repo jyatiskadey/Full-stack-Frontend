@@ -25,7 +25,7 @@ const ResetPassword = () => {
       return;
     }
 
-    const response = await fetch('http://localhost:9874/api/reset-password', {
+    const response = await fetch('https://social-media-backend-2-xdnp.onrender.com/api/reset-password', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

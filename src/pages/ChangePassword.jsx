@@ -25,7 +25,7 @@ const ChangePassword = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://localhost:9874/api/posts/changepassword", {
+      const response = await fetch("https://social-media-backend-2-xdnp.onrender.com/api/posts/changepassword", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

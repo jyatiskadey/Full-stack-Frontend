@@ -23,7 +23,7 @@ const Login = () => {
     setStatus("");
 
     try {
-      const response = await fetch("http://localhost:9874/api/posts/login", {
+      const response = await fetch("https://social-media-backend-2-xdnp.onrender.com/api/posts/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

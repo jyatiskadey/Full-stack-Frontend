@@ -7,7 +7,7 @@ const PasswordResetRequest = () => {
   const handleResetRequest = async (e) => {
     e.preventDefault();
 
-    const response = await fetch('http://localhost:9874/api/send-email', {
+    const response = await fetch('https://social-media-backend-2-xdnp.onrender.com/api/send-email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

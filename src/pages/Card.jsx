@@ -21,7 +21,7 @@ const UserPosts = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          "http://localhost:9874/api/posts/user-post-details",
+          "https://social-media-backend-2-xdnp.onrender.com/api/posts/user-post-details",
           {
             method: "GET",
             headers: {
@@ -69,7 +69,7 @@ const UserPosts = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:9874/api/posts/delete-post/${postToDelete}`,
+        `https://social-media-backend-2-xdnp.onrender.com/api/posts/delete-post/${postToDelete}`,
         {
           method: "DELETE", // Ensure this matches your backend's delete method
           headers: {
@@ -132,7 +132,7 @@ const UserPosts = () => {
     try {
       // Send a PUT request to update the post
       const response = await fetch(
-        `http://localhost:9874/api/posts/edit-post/${editingPost._id}`,
+        `https://social-media-backend-2-xdnp.onrender.com/api/posts/edit-post/${editingPost._id}`,
         {
           method: "PUT",  // Changed from "POST" to "PUT"
           headers: {

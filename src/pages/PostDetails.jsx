@@ -13,7 +13,7 @@ const PostDetails = () => {
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:9874/api/posts/getpostbyID/${id}`
+          `https://social-media-backend-2-xdnp.onrender.com/api/posts/getpostbyID/${id}`
         );
         setPost(response.data);
         setLoading(false);

@@ -54,7 +54,7 @@ const Profile = ({postId }) => {
       }
 
       const response = await fetch(
-        "http://localhost:9874/api/posts/get-user-specific-notification",
+        "https://social-media-backend-2-xdnp.onrender.com/api/posts/get-user-specific-notification",
         {
           method: "GET",
           headers: {
@@ -111,7 +111,7 @@ const Profile = ({postId }) => {
         }
 
         const response = await fetch(
-          "http://localhost:9874/api/posts/user-details",
+          "https://social-media-backend-2-xdnp.onrender.com/api/posts/user-details",
           {
             method: "GET",
             headers: {
@@ -145,7 +145,7 @@ const Profile = ({postId }) => {
       setLoading(true);
       try {
         const response = await fetch(
-          "http://localhost:9874/api/posts/get-all-notification"
+          "https://social-media-backend-2-xdnp.onrender.com/api/posts/get-all-notification"
         );
         const data = await response.json();
         setNotifications(data.notifications);
@@ -177,7 +177,7 @@ const Profile = ({postId }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:9874/api/posts/${postId}/Allcomments`,
+        `https://social-media-backend-2-xdnp.onrender.com/api/posts/${postId}/Allcomments`,
         {
           method: "GET",
           headers: {
@@ -233,7 +233,7 @@ const handleUpdateComment = async (postId, commentId) => {
   try {
     // Sending the updated comment to the server
     const response = await fetch(
-      `http://localhost:9874/api/posts/${postId}/comments/${commentId}/UpdateComment`, // Ensure postId and commentId are correct
+      `https://social-media-backend-2-xdnp.onrender.com/api/posts/${postId}/comments/${commentId}/UpdateComment`, // Ensure postId and commentId are correct
       {
         method: "PUT",
         headers: {
@@ -280,7 +280,7 @@ const handleUpdateComment = async (postId, commentId) => {
   const fetchPostComments = async (postId) => {
     try {
       const response = await fetch(
-        `http://localhost:9874/api/posts/${postId}/comments`,
+        `https://social-media-backend-2-xdnp.onrender.com/api/posts/${postId}/comments`,
         {
           method: "GET",
           headers: {
@@ -313,7 +313,7 @@ const handleUpdateComment = async (postId, commentId) => {
       setError(null);
 
       const response = await fetch(
-        `http://localhost:9874/api/posts/${postId}`, // Replace with your actual endpoint
+        `https://social-media-backend-2-xdnp.onrender.com/api/posts/${postId}`, // Replace with your actual endpoint
         {
           method: "GET",
           headers: {
@@ -340,7 +340,7 @@ const handleUpdateComment = async (postId, commentId) => {
       setLoading(true);
       try {
         const response = await fetch(
-          "http://localhost:9874/api/posts/see-all-posts"
+          "https://social-media-backend-2-xdnp.onrender.com/api/posts/see-all-posts"
         );
         const data = await response.json();
 
@@ -371,7 +371,7 @@ const handleUpdateComment = async (postId, commentId) => {
 
     try {
       const response = await fetch(
-        `http://localhost:9874/api/posts/${postId}/add-comment`,
+        `https://social-media-backend-2-xdnp.onrender.com/api/posts/${postId}/add-comment`,
         {
           method: "POST",
           headers: {
@@ -449,7 +449,7 @@ const handleUpdateComment = async (postId, commentId) => {
       try {
         // Upload the image to the server
         const response = await fetch(
-          "http://localhost:9874/api/posts/upload-image",
+          "https://social-media-backend-2-xdnp.onrender.com/api/posts/upload-image",
           {
             method: "POST",
             headers: {
@@ -490,7 +490,7 @@ const handleUpdateComment = async (postId, commentId) => {
 
     try {
       const response = await fetch(
-        "http://localhost:9874/api/posts/create-post",
+        "https://social-media-backend-2-xdnp.onrender.com/api/posts/create-post",
         {
           method: "POST",
           headers: {
@@ -554,7 +554,7 @@ const handleUpdateComment = async (postId, commentId) => {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        "http://localhost:9874/api/posts/changepassword",
+        "https://social-media-backend-2-xdnp.onrender.com/api/posts/changepassword",
         {
           method: "POST",
           headers: {
@@ -760,112 +760,109 @@ const handleUpdateComment = async (postId, commentId) => {
         )}
 
         {/* Display Posts */}
-        <div>
-          <h3 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
-            All Posts
-          </h3>
-          {loading ? (
-            <p>Loading posts...</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {posts.length > 0 ? (
-                posts.map((post) => (
-                  <div
-                    key={post._id}
-                    className="bg-white p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-in-out transform mb-6"
-                  >
-                    {/* User Information */}
-                    <div className="mb-4 flex items-center space-x-3">
-                      <div className="text-lg font-semibold text-indigo-600">
-                        Created By:
-                      </div>
-                      <p className="text-gray-700">{post.userName}</p>
-                    </div>
+        <div className="max-w-7xl mx-auto px-4 py-10">
+      <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+        All Posts
+      </h3>
 
-                    {/* Image */}
-                    {post.imageUrl && (
-                      <img
-                        src={post.imageUrl}
-                        alt={post.title}
-                        className="w-full h-56 object-cover rounded-lg mb-6 shadow-md"
-                      />
-                    )}
+      {loading ? (
+        <p className="text-center text-lg text-gray-700">Loading posts...</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {posts.length > 0 ? (
+            posts.map((post) => (
+              <div
+                key={post._id}
+                className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:scale-105 border border-gray-200"
+              >
+                {/* User Information */}
+                <div className="mb-4 flex items-center space-x-3">
+                  <span className="text-lg font-semibold text-indigo-600">
+                    Created By:
+                  </span>
+                  <p className="text-gray-800 font-medium">{post.userName}</p>
+                </div>
 
-                    <h4 className="font-semibold text-gray-800 text-xl mb-3">
-                      {truncate(post.title, { length: 10, omission: "..." })}
-                    </h4>
+                {/* Image */}
+                {post.imageUrl && (
+                  <img
+                    src={post.imageUrl}
+                    alt={post.title}
+                    className="w-full h-60 object-cover rounded-xl mb-5 shadow-md"
+                  />
+                )}
 
-                    <p className="text-gray-600 text-base">
-                      {truncate(post.description, {
-                        length: 20,
-                        omission: "...",
-                      })}
-                    </p>
+                {/* Title */}
+                <h4 className="font-semibold text-gray-900 text-xl mb-3 truncate">
+                  {post.title}
+                </h4>
 
-                    <div className="mt-4 flex justify-between items-center text-sm text-gray-500">
-                      <button
-                        onClick={handleOpenPostDetailModal}
-                        className="text-indigo-600 hover:text-indigo-800 font-semibold"
-                      >
-                        Read More
-                      </button>
-                    </div>
-
-                    {/* Comment Section */}
-                    <div className="mt-6">
-                      <h5 className="text-lg font-semibold text-gray-800 mb-2">
-                        Comments
-                      </h5>
-                      <textarea
-                        placeholder="Write a comment..."
-                        rows="3"
-                        className="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                        value={commentTexts[post._id] || ""} 
-                        onChange={(e) => handleCommentChange(e, post._id)} 
-                      ></textarea>
-                      <div className="flex flex-wrap gap-4 mt-3">
-                        {/* Add Comment Button */}
-                        <button
-                          onClick={() => handleAddComment(post._id)} 
-                          className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-all duration-200"
-                        >
-                          Add Comment
-                        </button>
-
-                        {/* View All Comments Button */}
-                        <button
-                          onClick={() => handleViewAllComment(post._id)}
-                          className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-all duration-200"
-                        >
-                          View All Comments
-                        </button>
-
-                        {/* Edit Comments Button */}
-                      {/* Edit Your Comments Button */}
-{post && (
-        <button
-          onClick={() => {
-            console.log("Selected Post ID:", post._id); // Log the selected post ID to the console
-            handleViewCommentsClick(post._id); // Open the comments modal for the selected post
-          }}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-all duration-200"
-        >
-          Edit Your Comments
-        </button>
-      )}
-
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-600 text-center col-span-full">
-                  No posts are available at the moment.
+                {/* Description */}
+                <p className="text-gray-700 text-base mb-4 line-clamp-3">
+                  {post.description}
                 </p>
-              )}
-            </div>
+
+                {/* Read More Button */}
+                <div className="flex justify-between items-center text-sm text-gray-600">
+                  <button
+                    onClick={handleOpenPostDetailModal}
+                    className="text-indigo-600 hover:text-indigo-800 font-semibold transition-all duration-200"
+                  >
+                    Read More →
+                  </button>
+                </div>
+
+                {/* Comment Section */}
+                <div className="mt-6">
+                  <h5 className="text-lg font-semibold text-gray-900 mb-2">
+                    Comments
+                  </h5>
+                  <textarea
+                    placeholder="Write a comment..."
+                    rows="3"
+                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    value={commentTexts[post._id] || ""}
+                    onChange={(e) => handleCommentChange(e, post._id)}
+                  ></textarea>
+
+                  <div className="flex flex-wrap gap-4 mt-4">
+                    {/* Add Comment Button */}
+                    <button
+                      onClick={() => handleAddComment(post._id)}
+                      className="bg-indigo-600 text-white px-5 py-2 rounded-xl hover:bg-indigo-700 transition-all duration-200"
+                    >
+                      Add Comment
+                    </button>
+
+                    {/* View All Comments Button */}
+                    <button
+                      onClick={() => handleViewAllComment(post._id)}
+                      className="bg-indigo-600 text-white px-5 py-2 rounded-xl hover:bg-indigo-700 transition-all duration-200"
+                    >
+                      View All Comments
+                    </button>
+
+                    {/* Edit Your Comments Button */}
+                    {post && (
+                      <button
+                        onClick={() => handleViewCommentsClick(post._id)}
+                        className="bg-indigo-600 text-white px-5 py-2 rounded-xl hover:bg-indigo-700 transition-all duration-200"
+                      >
+                        Edit Your Comments
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-600 text-center col-span-full">
+              No posts are available at the moment.
+            </p>
           )}
         </div>
+      )}
+    </div>
       </div>
 
       {/* Sidebar for Notifications */}

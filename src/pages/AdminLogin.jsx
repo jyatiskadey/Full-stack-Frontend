@@ -20,7 +20,7 @@ const AdminLoginPage = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:9874/api/posts/admin/login",
+        "https://social-media-backend-2-xdnp.onrender.com/api/posts/admin/login",
         {
           method: "POST",
           headers: {

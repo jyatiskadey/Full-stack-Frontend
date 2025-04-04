@@ -101,7 +101,7 @@ const [messageData, setMessageData] = useState({ recipient: "", message: "" });
     try {
       do {
         const response = await axios.get(
-          `http://localhost:9874/api/posts/getallposts?page=${page}&limit=5&searchTerm=${searchTerm}&sortField=${sortField}&sortOrder=${sortOrder}`
+          `https://social-media-backend-2-xdnp.onrender.com/api/posts/getallposts?page=${page}&limit=5&searchTerm=${searchTerm}&sortField=${sortField}&sortOrder=${sortOrder}`
         );
         allPosts = allPosts.concat(response.data.posts);
         totalPages = response.data.totalPages;
@@ -117,7 +117,7 @@ const [messageData, setMessageData] = useState({ recipient: "", message: "" });
   const handleDeleteNotification = async (notificationId) => {
     try {
       // Send DELETE request to the backend to delete the notification
-      const response = await axios.delete(`http://localhost:9874/api/posts/notifications/${notificationId}`);
+      const response = await axios.delete(`https://social-media-backend-2-xdnp.onrender.com/api/posts/notifications/${notificationId}`);
       
       // Check if the notification was deleted successfully
       if (response.status === 200) {
@@ -136,7 +136,7 @@ const [messageData, setMessageData] = useState({ recipient: "", message: "" });
   
   const fetchActiveUsers = async () => {
     try {
-      const response = await fetch("http://localhost:9874/api/posts/active-user");
+      const response = await fetch("https://social-media-backend-2-xdnp.onrender.com/api/posts/active-user");
       if (!response.ok) {
         throw new Error("Failed to fetch active users");
       }
@@ -151,7 +151,7 @@ const [messageData, setMessageData] = useState({ recipient: "", message: "" });
     const fetchMessages = async () => {
       try {
         // Make API call to your backend
-        const response = await axios.get("http://localhost:9874/api/posts/get-all-msg"); // Replace USER_ID with the logged-in user's ID or use dynamic data
+        const response = await axios.get("https://social-media-backend-2-xdnp.onrender.com/api/posts/get-all-msg"); // Replace USER_ID with the logged-in user's ID or use dynamic data
 
         // Assuming the response has a 'messages' field
         setAllMessages(response.data.messages);
@@ -189,7 +189,7 @@ const [messageData, setMessageData] = useState({ recipient: "", message: "" });
     }
   
     try {
-      const response = await fetch("http://localhost:9874/api/posts/send-msg", {
+      const response = await fetch("https://social-media-backend-2-xdnp.onrender.com/api/posts/send-msg", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -229,7 +229,7 @@ const [messageData, setMessageData] = useState({ recipient: "", message: "" });
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:9874/api/posts/getallusers?page=${page}&limit=${usersPerPage}&searchTerm=${searchTerm}`
+        `https://social-media-backend-2-xdnp.onrender.com/api/posts/getallusers?page=${page}&limit=${usersPerPage}&searchTerm=${searchTerm}`
       );
       setUsers(response.data.users);
       setTotalPages(Math.ceil(response.data.totalUsers / usersPerPage));
@@ -287,7 +287,7 @@ const [messageData, setMessageData] = useState({ recipient: "", message: "" });
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:9874/api/posts/getallposts?page=${page}&limit=5&searchTerm=${searchTerm}&sortField=${sortField}&sortOrder=${sortOrder}`
+        `https://social-media-backend-2-xdnp.onrender.com/api/posts/getallposts?page=${page}&limit=5&searchTerm=${searchTerm}&sortField=${sortField}&sortOrder=${sortOrder}`
       );
       setPosts(response.data.posts);
       setPostTotalPages(response.data.totalPages);
@@ -318,7 +318,7 @@ const [messageData, setMessageData] = useState({ recipient: "", message: "" });
   const toggleUserStatus = async (userId) => {
     try {
       const response = await fetch(
-        `http://localhost:9874/api/posts/${userId}/toggle-status`,
+        `https://social-media-backend-2-xdnp.onrender.com/api/posts/${userId}/toggle-status`,
         { method: "PUT", headers: { "Content-Type": "application/json" } }
       );
 
@@ -389,7 +389,7 @@ const [messageData, setMessageData] = useState({ recipient: "", message: "" });
    const handleNotificationSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:9874/api/posts/create-notification", {
+      const response = await fetch("https://social-media-backend-2-xdnp.onrender.com/api/posts/create-notification", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -443,7 +443,7 @@ const [messageData, setMessageData] = useState({ recipient: "", message: "" });
 
   const fetchNotifications = async () => {
     try {
-      const response = await fetch("http://localhost:9874/api/posts/get-all-notification");
+      const response = await fetch("https://social-media-backend-2-xdnp.onrender.com/api/posts/get-all-notification");
       const data = await response.json();
       setNotifications(data.notifications);
     } catch (error) {
@@ -460,7 +460,7 @@ const [messageData, setMessageData] = useState({ recipient: "", message: "" });
     e.preventDefault();
   
     try {
-      const response = await fetch("http://localhost:9874/api/posts/send-msg", {
+      const response = await fetch("https://social-media-backend-2-xdnp.onrender.com/api/posts/send-msg", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
