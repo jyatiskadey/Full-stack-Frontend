@@ -165,140 +165,186 @@ const UserPosts = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Back Button */}
-        <button
-          onClick={handleBack}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-6"
-        >
-          Back
-        </button>
-
-        {/* Edit Post Form */}
-        {editingPost && (
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-md shadow-md max-w-md w-full">
-              <h2 className="text-2xl font-semibold mb-4">Edit Post</h2>
-              <form onSubmit={handleSubmitEdit}>
-                <div className="mb-4">
-                  <label htmlFor="title" className="block text-sm font-medium">
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleFormChange}
-                    className="w-full mt-1 p-2 border rounded-md"
-                    placeholder="Enter post title"
-                    required
-                  />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="description" className="block text-sm font-medium">
-                    Description
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleFormChange}
-                    className="w-full mt-1 p-2 border rounded-md"
-                    placeholder="Enter post description"
-                    required
-                  />
-                </div>
-                <div className="flex justify-between">
-                  <button
-                    type="submit"
-                    className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-                  >
-                    Update Post
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEditingPost(null)} // Close the edit form
-                    className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
+        <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              SocialConnect
+            </h1>
           </div>
-        )}
 
-        {/* Posts Grid */}
-        <h2 className="text-2xl font-bold text-gray-800 mb-4"></h2>
-        {posts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
-              <div
-                key={post._id}
-                className="border border-gray-300 rounded-lg overflow-hidden shadow-md bg-white"
+          <div className="flex items-center space-x-2">
+            <button
+              // onClick={handleNotificationsClick}
+              className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                {/* Image Section */}
-                {post.imageUrl && (
-                  <div className="h-48 w-full bg-gray-200">
-                    <img
-                      src={post.imageUrl}
-                      alt={post.title}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                )}
-                {/* Title and Description Section */}
-                <div className="p-4">
-                  <h4 className="text-xl font-semibold text-gray-800 mb-2">
-                    {post.title}
-                  </h4>
-                  <p className="text-gray-600">{post.description}</p>
-                  {/* Delete Button */}
-                  <button
-                    onClick={() => openModal(post._id)}
-                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mt-4"
-                  >
-                    Delete Post
-                  </button>
-                  <button
-                    onClick={() => handleEditPost(post)}
-                    className="bg-green-500 ml-6 text-white px-4 py-2 rounded hover:bg-green-600 mt-4"
-                  >
-                    Edit Title and desc..
-                  </button>
-                </div>
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              {/* {userNotifications.length > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500 text-white text-xs rounded-full">
+                  {userNotifications.length}
+                </span>
+              )} */}
+            </button>
+
+            <div className="flex items-center space-x-2">
+              <div className="h-8 w-8 rounded-full bg-gray-200 overflow-hidden">
+                {/* <img
+                  src={user.profilePic || "/placeholder.svg"}
+                  alt={user.name}
+                  className="h-full w-full object-cover"
+                /> */}
               </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-600">No posts available.</p>
-        )}
-      </div>
-
-      {/* Confirmation Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-md shadow-md max-w-md w-full">
-            <h3 className="text-xl font-semibold mb-4">Are you sure you want to delete this post?</h3>
-            <div className="flex justify-between">
-              <button
-                onClick={handleDeletePost}
-                className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700"
-              >
-                Yes, Delete
-              </button>
-              <button
-                onClick={closeModal}
-                className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600"
-              >
-                Cancel
-              </button>
+              {/* <span className="font-medium hidden md:inline-block">{user.name}</span> */}
             </div>
           </div>
         </div>
+      </header>
+    <div className="max-w-6xl mx-auto">
+      {/* Back Button */}
+      <button
+        onClick={handleBack}
+        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-6"
+      >
+        Back
+      </button>
+  
+      {/* Edit Post Form */}
+      {editingPost && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-md shadow-md max-w-md w-full">
+            <h2 className="text-2xl font-semibold mb-4">Edit Post</h2>
+            <form onSubmit={handleSubmitEdit}>
+              <div className="mb-4">
+                <label htmlFor="title" className="block text-sm font-medium">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleFormChange}
+                  className="w-full mt-1 p-2 border rounded-md"
+                  placeholder="Enter post title"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="description" className="block text-sm font-medium">
+                  Description
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleFormChange}
+                  className="w-full mt-1 p-2 border rounded-md"
+                  placeholder="Enter post description"
+                  required
+                />
+              </div>
+              <div className="flex justify-between">
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+                >
+                  Update Post
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingPost(null)} // Close the edit form
+                  className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+  
+      {/* Posts Grid */}
+      <h2 className="text-2xl font-bold text-gray-800 mb-4"></h2>
+      {posts.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {posts.map((post) => (
+            <div
+              key={post._id}
+              className="border border-gray-300 rounded-lg overflow-hidden shadow-md bg-white"
+            >
+              {/* Image Section */}
+              {post.imageUrl && (
+                <div className="h-48 w-full bg-gray-200">
+                  <img
+                    src={post.imageUrl}
+                    alt={post.title}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              )}
+              {/* Title and Description Section */}
+              <div className="p-4">
+                <h4 className="text-xl font-semibold text-gray-800 mb-2">
+                  {post.title}
+                </h4>
+                <p className="text-gray-600">{post.description}</p>
+                {/* Delete Button */}
+                <button
+                  onClick={() => openModal(post._id)}
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mt-4"
+                >
+                  Delete Post
+                </button>
+                <button
+                  onClick={() => handleEditPost(post)}
+                  className="bg-green-500 ml-6 text-white px-4 py-2 rounded hover:bg-green-600 mt-4"
+                >
+                  Edit Title and desc..
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-gray-600">No posts available.</p>
       )}
     </div>
+  
+    {/* Confirmation Modal */}
+    {showModal && (
+      <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+        <div className="bg-white p-6 rounded-md shadow-md max-w-md w-full">
+          <h3 className="text-xl font-semibold mb-4">Are you sure you want to delete this post?</h3>
+          <div className="flex justify-between">
+            <button
+              onClick={handleDeletePost}
+              className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700"
+            >
+              Yes, Delete
+            </button>
+            <button
+              onClick={closeModal}
+              className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
   );
 <ToastContainer />
 };

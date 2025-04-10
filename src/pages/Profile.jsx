@@ -1,56 +1,42 @@
-import {
-  faBell,
-  faEdit,
-  faKey,
-  faPlus,
-  faSignOutAlt,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useState } from "react";
-import { FaBell } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import Swal from "sweetalert2";
-import { truncate } from "lodash";
-const Profile = ({postId }) => {
-  const [isPopUpVisible, setIsPopUpVisible] = useState(false); // Control pop-up visibility
-  // const [userComments, setUserComments] = useState([]);
-  const [visibleComments, setVisibleComments] = useState(5);
+"use client"
 
-  const [userComments, setUserComments] = useState([]); // Renamed state to userComments
-  const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false); // Renamed modal state
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { ToastContainer, toast } from "react-toastify"
+import Swal from "sweetalert2"
 
-  const [commentTexts, setCommentTexts] = useState({});
-
-  const [isPostDetailModalOpen, setIsPostDetailModalOpen] = useState(false);
-  const [selectedPostId, setSelectedPostId] = useState(null);
-
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const [user, setUser] = useState(null);
-  const [imageUrl, setImageUrl] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const [error, setError] = useState(null);
-  const [notifications, setNotifications] = useState([]);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [posts, setPosts] = useState([]);
-  // const [isNotificationsVisible, setIsNotificationsVisible] = useState(false); // State to control visibility of notifications
-  const [isNotificationsVisible, setIsNotificationsVisible] = useState(false);
-  const [userNotifications, setUserNotifications] = useState([]);
-  const [comments, setComments] = useState([]);
-  const [loadingComments, setLoadingComments] = useState(false);
-  const [commentsError, setCommentsError] = useState(null);
-// const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
+const Profile = ({ postId }) => {
+  const [isPopUpVisible, setIsPopUpVisible] = useState(false)
+  const [visibleComments, setVisibleComments] = useState(5)
+  const [userComments, setUserComments] = useState([])
+  const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false)
+  const [commentTexts, setCommentTexts] = useState({})
+  const [isPostDetailModalOpen, setIsPostDetailModalOpen] = useState(false)
+  const [selectedPostId, setSelectedPostId] = useState(null)
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
+  const [user, setUser] = useState(null)
+  const [imageUrl, setImageUrl] = useState("")
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
+  const [error, setError] = useState(null)
+  const [notifications, setNotifications] = useState([])
+  const [isNotificationsVisible, setIsNotificationsVisible] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [posts, setPosts] = useState([])
+  const [userNotifications, setUserNotifications] = useState([])
+  const [comments, setComments] = useState([])
+  const [loadingComments, setLoadingComments] = useState(false)
+  const [commentsError, setCommentsError] = useState(null)
+  const navigate = useNavigate()
 
   const fetchNotifications = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token")
       if (!token) {
-        throw new Error("No token found in localStorage.");
+        throw new Error("No token found in localStorage.")
       }
 
       const response = await fetch(
@@ -60,359 +46,297 @@ const Profile = ({postId }) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
-      );
+        },
+      )
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to fetch messages: ${errorText}`);
+        const errorText = await response.text()
+        throw new Error(`Failed to fetch messages: ${errorText}`)
       }
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (data.messages && data.messages.length > 0) {
-        setUserNotifications(data.messages);
+        setUserNotifications(data.messages)
       } else {
-        setUserNotifications([]);
+        setUserNotifications([])
       }
 
-      setLoading(false);
+      setLoading(false)
     } catch (error) {
-      // console.error("Error fetching notifications:", error.message);
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  // Run fetchNotifications once on component mount
   useEffect(() => {
-    fetchNotifications();
-  }, []);
-
-  const navigate = useNavigate();
+    fetchNotifications()
+  }, [])
 
   const handleNotificationsClick = () => {
-    setIsNotificationsVisible(!isNotificationsVisible); // Toggle visibility
-  };
-  const notificationses = [
-    "You have a new message.",
-    "Your password was changed successfully.",
-    "A new comment was posted on your profile.",
-  ];
+    setIsNotificationsVisible(!isNotificationsVisible)
+  }
 
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token")
 
         if (!token) {
-          setError("Token is missing. Please log in again.");
-          setLoading(false);
-          return navigate("/login");
+          setError("Token is missing. Please log in again.")
+          setLoading(false)
+          return navigate("/login")
         }
 
-        const response = await fetch(
-          "https://social-media-backend-2-xdnp.onrender.com/api/posts/user-details",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch("https://social-media-backend-2-xdnp.onrender.com/api/posts/user-details", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
 
-        const data = await response.json();
+        const data = await response.json()
 
         if (response.ok) {
-          setUser(data.user);
+          setUser(data.user)
         } else {
-          setError(data.message || "Failed to fetch user details.");
-          navigate("/login");
+          setError(data.message || "Failed to fetch user details.")
+          navigate("/login")
         }
-        setLoading(false);
+        setLoading(false)
       } catch (error) {
-        console.error("Error fetching user details:", error);
-        setError("An error occurred while fetching user details.");
-        setLoading(false);
-        navigate("/login");
+        console.error("Error fetching user details:", error)
+        setError("An error occurred while fetching user details.")
+        setLoading(false)
+        navigate("/login")
       }
-    };
+    }
 
-    fetchUserDetails();
-  }, [navigate]);
+    fetchUserDetails()
+  }, [navigate])
 
   useEffect(() => {
     const fetchNotifications = async () => {
-      setLoading(true);
+      setLoading(true)
       try {
-        const response = await fetch(
-          "https://social-media-backend-2-xdnp.onrender.com/api/posts/get-all-notification"
-        );
-        const data = await response.json();
-        setNotifications(data.notifications);
+        const response = await fetch("https://social-media-backend-2-xdnp.onrender.com/api/posts/get-all-notification")
+        const data = await response.json()
+        setNotifications(data.notifications)
       } catch (error) {
-        console.error("Error fetching notifications:", error);
+        console.error("Error fetching notifications:", error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchNotifications();
-  }, []);
+    fetchNotifications()
+  }, [])
 
   const handleCommentChange = (e, postId) => {
     setCommentTexts((prev) => ({
       ...prev,
-      [postId]: e.target.value, // Update the comment text for the specific post
-    }));
-  };
+      [postId]: e.target.value,
+    }))
+  }
 
   const handleViewCommentsClick = (postId) => {
-   setSelectedPostId(postId);
-    fetchPostComments(postId); 
-  };
+    setSelectedPostId(postId)
+    fetchPostComments(postId)
+  }
 
   const handleViewAllComment = async (postId) => {
-    setLoadingComments(true);
-    setCommentsError(null);
+    setLoadingComments(true)
+    setCommentsError(null)
 
     try {
-      const response = await fetch(
-        `https://social-media-backend-2-xdnp.onrender.com/api/posts/${postId}/Allcomments`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setComments(data.comments); // Update state with comments and usernames
-        setIsPopUpVisible(true); // Show the pop-up
-      } else {
-        setCommentsError(data.message || "Failed to fetch comments");
-      }
-    } catch (error) {
-      setCommentsError("An error occurred while fetching comments");
-      console.error(error);
-    } finally {
-      setLoadingComments(false); // Hide loading state
-    }
-  };
-
-  // Function to handle comment edit
-// Function to handle comment edit
-const handleEditComment = (commentId, newCommentText) => {
-  // Update the state of userComments with the new text
-  setUserComments((prevComments) =>
-    prevComments.map((comment) =>
-      comment._id === commentId
-        ? { ...comment, text: newCommentText }
-        : comment
-    )
-  );
-};
-
-const handleUpdateComment = async (postId, commentId) => {
-  const updatedComment = userComments.find((comment) => comment._id === commentId);
-
-  if (!updatedComment) {
-    alert("Comment not found.");
-    return;
-  }
-
-  // Ensure the comment text is not empty or just spaces
-  if (!updatedComment.text.trim()) {
-    alert("Comment text cannot be empty.");
-    return;
-  }
-
-  try {
-    // Sending the updated comment to the server
-    const response = await fetch(
-      `https://social-media-backend-2-xdnp.onrender.com/api/posts/${postId}/comments/${commentId}/UpdateComment`, // Ensure postId and commentId are correct
-      {
-        method: "PUT",
+      const response = await fetch(`https://social-media-backend-2-xdnp.onrender.com/api/posts/${postId}/Allcomments`, {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // Ensure token is available
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ text: updatedComment.text }),
-      }
-    );
+      })
 
-    const data = await response.json();
-
-    if (response.ok) {
-      Swal.fire({
-    title: "Success!",
-    text: "Comment updated successfully!",
-    icon: "success",
-    confirmButtonText: "OK",
-    confirmButtonColor: "#3085d6",
-  });
-
-      setUserComments((prevComments) =>
-        prevComments.map((comment) =>
-          comment._id === commentId ? { ...comment, text: updatedComment.text } : comment
-        )
-      );
-    } else {
-      // Handle error returned from the server
-      alert(data.message || "Failed to update comment.");
-    }
-  } catch (error) {
-    console.error("Error updating comment:", error);
-    alert("An error occurred while updating the comment.");
-  }
-};
-
-
-  
-
-
-  
-
-  
-  const fetchPostComments = async (postId) => {
-    try {
-      const response = await fetch(
-        `https://social-media-backend-2-xdnp.onrender.com/api/posts/${postId}/comments`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      const data = await response.json();
+      const data = await response.json()
 
       if (response.ok) {
-        setUserComments(data.comments); // Correctly update the state
-        setIsCommentsModalOpen(true); // Open the modal
+        setComments(data.comments)
+        setIsPopUpVisible(true)
       } else {
-        alert(data.message || "Failed to load comments.");
+        setCommentsError(data.message || "Failed to fetch comments")
       }
     } catch (error) {
-      console.error("Error fetching comments:", error);
-      alert("Error fetching comments.");
+      setCommentsError("An error occurred while fetching comments")
+      console.error(error)
+    } finally {
+      setLoadingComments(false)
     }
-  };
+  }
 
-  const closeCommentsModal = () => {
-    setIsCommentsModalOpen(false);
-  };
+  const handleEditComment = (commentId, newCommentText) => {
+    setUserComments((prevComments) =>
+      prevComments.map((comment) => (comment._id === commentId ? { ...comment, text: newCommentText } : comment)),
+    )
+  }
 
-  // Function to fetch post details by ID
-  const fetchPostDetails = async (postId) => {
+  const handleUpdateComment = async (postId, commentId) => {
+    const updatedComment = userComments.find((comment) => comment._id === commentId)
+
+    if (!updatedComment) {
+      toast.error("Comment not found.")
+      return
+    }
+
+    if (!updatedComment.text.trim()) {
+      toast.error("Comment text cannot be empty.")
+      return
+    }
+
     try {
-      setLoading(true);
-      setError(null);
-
       const response = await fetch(
-        `https://social-media-backend-2-xdnp.onrender.com/api/posts/${postId}`, // Replace with your actual endpoint
+        `https://social-media-backend-2-xdnp.onrender.com/api/posts/${postId}/comments/${commentId}/UpdateComment`,
         {
-          method: "GET",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
-      );
+          body: JSON.stringify({ text: updatedComment.text }),
+        },
+      )
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success("Comment updated successfully!")
+        setUserComments((prevComments) =>
+          prevComments.map((comment) =>
+            comment._id === commentId ? { ...comment, text: updatedComment.text } : comment,
+          ),
+        )
+      } else {
+        toast.error(data.message || "Failed to update comment.")
+      }
+    } catch (error) {
+      console.error("Error updating comment:", error)
+      toast.error("An error occurred while updating the comment.")
+    }
+  }
+
+  const fetchPostComments = async (postId) => {
+    try {
+      const response = await fetch(`https://social-media-backend-2-xdnp.onrender.com/api/posts/${postId}/comments`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      const data = await response.json()
+
+      if (response.ok) {
+        setUserComments(data.comments)
+        setIsCommentsModalOpen(true)
+      } else {
+        toast.error(data.message || "Failed to load comments.")
+      }
+    } catch (error) {
+      console.error("Error fetching comments:", error)
+      toast.error("Error fetching comments.")
+    }
+  }
+
+  const closeCommentsModal = () => {
+    setIsCommentsModalOpen(false)
+  }
+
+  const fetchPostDetails = async (postId) => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      const response = await fetch(`https://social-media-backend-2-xdnp.onrender.com/api/posts/${postId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
 
       if (!response.ok) {
-        throw new Error("Failed to fetch post details");
+        throw new Error("Failed to fetch post details")
       }
 
-      const data = await response.json();
-      setPosts(data); // Set the fetched post data
+      const data = await response.json()
+      setPosts(data)
     } catch (err) {
-      setError(err.message || "Something went wrong");
+      setError(err.message || "Something went wrong")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
     const fetchPosts = async () => {
-      setLoading(true);
+      setLoading(true)
       try {
-        const response = await fetch(
-          "https://social-media-backend-2-xdnp.onrender.com/api/posts/see-all-posts"
-        );
-        const data = await response.json();
+        const response = await fetch("https://social-media-backend-2-xdnp.onrender.com/api/posts/see-all-posts")
+        const data = await response.json()
 
-        // Check if the response has posts
         if (data.status === "success") {
-          setPosts(data.posts);
+          setPosts(data.posts)
         } else {
-          // Handle the case where the server responds with an error status
-          console.error("Error fetching posts:", data.message);
+          console.error("Error fetching posts:", data.message)
         }
       } catch (error) {
-        console.error("Error fetching posts:", error);
+        console.error("Error fetching posts:", error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchPosts();
-  }, []);
+    fetchPosts()
+  }, [])
 
   const handleAddComment = async (postId) => {
-    const comment = commentTexts[postId]; // Get the comment text for this post
+    const comment = commentTexts[postId]
 
     if (!comment || comment.trim() === "") {
-      alert("Comment cannot be empty!");
-      return;
+      toast.error("Comment cannot be empty!")
+      return
     }
 
     try {
-      const response = await fetch(
-        `https://social-media-backend-2-xdnp.onrender.com/api/posts/${postId}/add-comment`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Add token for authorization
-          },
-          body: JSON.stringify({ comment }),
-        }
-      );
+      const response = await fetch(`https://social-media-backend-2-xdnp.onrender.com/api/posts/${postId}/add-comment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ comment }),
+      })
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (response.ok) {
-        Swal.fire({
-    title: "Success!",
-    text: "Comment added successfully!",
-    icon: "success",
-    confirmButtonText: "OK",
-    confirmButtonColor: "#3085d6",
-  });
-
+        toast.success("Comment added successfully!")
         setCommentTexts((prev) => ({
           ...prev,
-          [postId]: "", // Clear the input field for this post
-        }));
+          [postId]: "",
+        }))
       } else {
-        alert(data.message || "Failed to add comment. Please try again.");
+        toast.error(data.message || "Failed to add comment. Please try again.")
       }
     } catch (error) {
-      console.error("Error adding comment:", error);
-      alert("An error occurred while adding the comment.");
+      console.error("Error adding comment:", error)
+      toast.error("An error occurred while adding the comment.")
     }
-  };
+  }
 
   const handleOpenPostDetailModal = () => {
-    setIsPostDetailModalOpen(true);
-  };
+    setIsPostDetailModalOpen(true)
+  }
 
   const handleClosePostDetailModal = () => {
-    setIsPostDetailModalOpen(false);
-  };
+    setIsPostDetailModalOpen(false)
+  }
 
   const handleLogout = () => {
     Swal.fire({
@@ -425,725 +349,974 @@ const handleUpdateComment = async (postId, commentId) => {
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        // Remove the token and navigate to login page
-        localStorage.removeItem("token");
-        navigate("/login");
+        localStorage.removeItem("token")
+        navigate("/login")
       }
-    });
-  };
+    })
+  }
 
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0]
     if (file) {
-      // Preview the image locally
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onload = () => {
-        setImageUrl(reader.result); // Set the preview image URL
-      };
-      reader.readAsDataURL(file);
+        setImageUrl(reader.result)
+      }
+      reader.readAsDataURL(file)
 
-      // Prepare the file for upload
-      const formData = new FormData();
-      formData.append("image", file);
+      const formData = new FormData()
+      formData.append("image", file)
 
       try {
-        // Upload the image to the server
-        const response = await fetch(
-          "https://social-media-backend-2-xdnp.onrender.com/api/posts/upload-image",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
-            },
-            body: formData, // Send form data
-          }
-        );
+        const response = await fetch("https://social-media-backend-2-xdnp.onrender.com/api/posts/upload-image", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: formData,
+        })
 
-        const data = await response.json();
+        const data = await response.json()
 
-        // Check server response
         if (data.success && data.imageUrl) {
-          setImageUrl(data.imageUrl); // Update state with server image URL
-          // alert("Image uploaded successfully!");
-        } else {
-          // console.error("Upload failed:", data.message || "Unknown error.");
-          // alert("Failed to upload image.");
+          setImageUrl(data.imageUrl)
         }
       } catch (error) {
-        console.error("Error uploading image:", error);
-        // alert("An error occurred during image upload.");
+        console.error("Error uploading image:", error)
       }
     }
-  };
+  }
 
   const handleCreatePost = async () => {
     if (!title || !description) {
-      alert("Please fill in both title and description.");
-      return;
+      toast.error("Please fill in both title and description.")
+      return
     }
 
     const postData = {
       title,
       description,
       imageUrl,
-    };
+    }
 
     try {
-      const response = await fetch(
-        "https://social-media-backend-2-xdnp.onrender.com/api/posts/create-post",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify(postData),
-        }
-      );
+      const response = await fetch("https://social-media-backend-2-xdnp.onrender.com/api/posts/create-post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(postData),
+      })
 
-      const data = await response.json();
+      const data = await response.json()
       if (response.ok) {
         Swal.fire({
           icon: "success",
           title: "Post created successfully!",
           showConfirmButton: false,
           timer: 2000,
+        })
 
-          // The message will disappear after 1.5 seconds
-        });
+        window.location.reload()
 
-        // Reset the fields
-        window.location.reload();
-
-        setTitle("");
-        setDescription("");
-        setImageUrl("");
-        setIsUploadModalOpen(false);
+        setTitle("")
+        setDescription("")
+        setImageUrl("")
+        setIsUploadModalOpen(false)
       } else {
-        alert("Failed to create post.");
+        toast.error("Failed to create post.")
       }
     } catch (error) {
-      console.error("Error creating post:", error);
-      alert("Failed to create post.");
+      console.error("Error creating post:", error)
+      toast.error("Failed to create post.")
     }
-  };
+  }
 
   const handlePasswordChangeOpen = () => {
-    setIsPasswordModalOpen(true);
-  };
+    setIsPasswordModalOpen(true)
+  }
 
   const handlePasswordChangeClose = () => {
-    setIsPasswordModalOpen(false);
-  };
+    setIsPasswordModalOpen(false)
+  }
 
   const handlePasswordSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    // Validate form fields
     if (!newPassword || !confirmPassword) {
-      toast.error("Both fields are required.");
-      return;
+      toast.error("Both fields are required.")
+      return
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error("Password and confirmation do not match.");
-      return;
+      toast.error("Password and confirmation do not match.")
+      return
     }
 
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token")
 
-      const response = await fetch(
-        "https://social-media-backend-2-xdnp.onrender.com/api/posts/changepassword",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            password: newPassword,
-            passwordConfirmation: confirmPassword,
-          }),
-        }
-      );
+      const response = await fetch("https://social-media-backend-2-xdnp.onrender.com/api/posts/changepassword", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          password: newPassword,
+          passwordConfirmation: confirmPassword,
+        }),
+      })
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (response.ok) {
-        toast.success("Password changed successfully!");
+        toast.success("Password changed successfully!")
         setTimeout(() => {
-          navigate("/profile");
-        }, 2000);
+          navigate("/profile")
+        }, 2000)
       } else {
-        toast.error(data.message || "Something went wrong. Please try again.");
+        toast.error(data.message || "Something went wrong. Please try again.")
       }
     } catch (error) {
-      toast.error("An error occurred while changing your password.");
-      console.error("Error changing password:", error);
+      toast.error("An error occurred while changing your password.")
+      console.error("Error changing password:", error)
     }
-  };
+  }
 
   const gotoview = () => {
-    navigate("/view-post");
-  };
+    navigate("/view-post")
+  }
 
   const truncateText = (text, limit) => {
-    if (!text) return "";
-    const words = text.split(" ");
-    return words.length > limit
-      ? words.slice(0, limit).join(" ") + "..."
-      : words.join(" ");
-  };
+    if (!text) return ""
+    const words = text.split(" ")
+    return words.length > limit ? words.slice(0, limit).join(" ") + "..." : text
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    )
+  }
 
   if (!user) {
     return (
       <div className="flex items-center justify-center h-screen">
-        Loading...
+        <div className="text-lg font-medium">Loading user data...</div>
       </div>
-    );
+    )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      {/* Navbar */}
-      <nav className="bg-gradient-to-r from-indigo-600 to-blue-500 text-white p-4 fixed top-0 left-0 right-0 z-50 shadow-lg rounded-b-lg">
-        <div className="max-w-7xl mx-auto flex justify-between items-center px-4">
-          {/* Welcome Message */}
-          <h2 className="text-xl md:text-2xl font-bold tracking-wide text-white">
-            Welcome, <span className="text-yellow-300">{user.name}</span>!
-          </h2>
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              SocialConnect
+            </h1>
+          </div>
 
-          {/* Navbar Buttons */}
-          <div className="flex items-center space-x-4 md:space-x-6">
-            {/* Add Post Button */}
-            <button
-              onClick={() => setIsUploadModalOpen(true)}
-              className="bg-indigo-700 px-4 py-2 rounded-full hover:bg-indigo-800 transition-all duration-300 flex items-center space-x-2 text-sm md:text-base shadow-md"
-            >
-              <FontAwesomeIcon icon={faPlus} />
-              <span>Add Post</span>
-            </button>
-
-            {/* Your Posts Button */}
-            <button
-              onClick={() => gotoview(true)}
-              className="bg-green-500 px-4 py-2 rounded-full hover:bg-green-600 transition-all duration-300 flex items-center space-x-2 text-sm md:text-base shadow-md"
-            >
-              <FontAwesomeIcon icon={faEdit} />
-              <span>Your Posts</span>
-            </button>
-
-            {/* Change Password Button */}
-            <button
-              onClick={handlePasswordChangeOpen}
-              className="bg-purple-500 px-4 py-2 rounded-full hover:bg-purple-600 transition-all duration-300 flex items-center space-x-2 text-sm md:text-base shadow-md"
-            >
-              <FontAwesomeIcon icon={faKey} />
-              <span>Change Password</span>
-            </button>
-
-            {/* Notifications Button */}
+          <div className="flex items-center space-x-2">
             <button
               onClick={handleNotificationsClick}
-              className="relative bg-yellow-500 px-4 py-2 rounded-full hover:bg-yellow-600 transition-all duration-300 flex items-center space-x-2 text-sm md:text-base shadow-md"
+              className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
             >
-              <FontAwesomeIcon icon={faBell} />
-              <span>Notifications</span>
-              {notifications.length > 0 && (
-                <span className="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {notifications.length}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              {userNotifications.length > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500 text-white text-xs rounded-full">
+                  {userNotifications.length}
                 </span>
               )}
             </button>
+
+            <div className="flex items-center space-x-2">
+              <div className="h-8 w-8 rounded-full bg-gray-200 overflow-hidden">
+                <img
+                  src={user.profilePic || "/placeholder.svg"}
+                  alt={user.name}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <span className="font-medium hidden md:inline-block">{user.name}</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="flex flex-1 relative">
+        {/* Fixed Sidebar */}
+        <aside className="hidden md:block w-64 fixed top-[61px] left-0 h-[calc(100vh-61px)] bg-white shadow-lg overflow-y-auto">
+          <div className="p-6 space-y-6">
+            {/* User Profile Section */}
+            <div className="flex flex-col items-center">
+              <div className="h-20 w-20 rounded-full bg-gray-200 overflow-hidden border-4 border-white shadow-md">
+                <img
+                  src={user.profilePic || "/placeholder.svg"}
+                  alt={user.name}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <h2 className="mt-4 text-xl font-bold">{user.name}</h2>
+              <p className="text-sm text-gray-500">{user.email}</p>
+            </div>
+
+            {/* Navigation Section */}
+            <div className="space-y-2">
+              <h3 className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-3">Menu</h3>
+              <button
+                className="w-full flex items-center justify-start px-4 py-3 text-sm font-medium rounded-lg bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700 border border-purple-100 hover:from-purple-100 hover:to-pink-100 transition-colors"
+                onClick={() => setIsUploadModalOpen(true)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 mr-3"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Create Post
+              </button>
+              <button
+                className="w-full flex items-center justify-start px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-100 transition-colors"
+                onClick={gotoview}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 mr-3 text-blue-500"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Your Posts
+              </button>
+              <button
+                className="w-full flex items-center justify-start px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-100 transition-colors"
+                onClick={handlePasswordChangeOpen}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 mr-3 text-yellow-500"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                Change Password
+              </button>
+            </div>
 
             {/* Logout Button */}
-            <button
-              onClick={handleLogout}
-              className="bg-red-600 px-4 py-2 rounded-full hover:bg-red-700 transition-all duration-300 flex items-center space-x-2 text-sm md:text-base shadow-md"
-            >
-              <FontAwesomeIcon icon={faSignOutAlt} />
-              <span>Logout</span>
-            </button>
-
-            {/* Sidebar Toggle Button */}
-            <button
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="relative text-gray-300 hover:text-white transition-all duration-300"
-            >
-              <FaBell size={24} />
-              {notifications.length > 0 && (
-                <span className="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {notifications.length}
-                </span>
-              )}
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      <div className="bg-white shadow-xl rounded-lg p-6 mt-20 mx-auto w-full">
-        {isUploadModalOpen && (
-          <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60 z-50 transition-all duration-300 ease-in-out">
-            <div className="bg-white p-6 rounded-lg w-full max-w-4xl shadow-xl transform transition-all duration-300 ease-in-out">
-              <h3 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
-                Upload an Image
-              </h3>
-
-
-              <div className="flex gap-8 items-center">
-                
-                <div className="flex-shrink-0 w-48 h-48 bg-gray-100 rounded-lg overflow-hidden">
-                  <input
-                    type="file"
-                    onChange={handleImageUpload}
-                    className="w-full h-full object-cover opacity-0 cursor-pointer"
-                  />
-                  {imageUrl && (
-                    <img
-                      src={imageUrl}
-                      alt="Uploaded"
-                      className="w-full h-full object-cover"
-                    />
-                  )}
-                </div>
-
-                {/* Form Inputs */}
-                <div className="flex-grow space-y-4 w-full">
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-2">
-                      Title
-                    </label>
-                    <input
-                      type="text"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg mb-4 transition duration-200 ease-in-out focus:ring-2 focus:ring-indigo-500"
-                      placeholder="Enter title"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-2">
-                      Description
-                    </label>
-                    <textarea
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg transition duration-200 ease-in-out focus:ring-2 focus:ring-indigo-500"
-                      placeholder="Enter description"
-                      rows="4"
-                    />
-                  </div>
-
-                  {/* Buttons */}
-                  <div className="flex justify-between items-center mt-6 space-x-4">
-                    <button
-                      type="button"
-                      onClick={() => setIsUploadModalOpen(false)}
-                      className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-200 ease-in-out"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleCreatePost}
-                      className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition duration-200 ease-in-out"
-                    >
-                      Submit Post
-                    </button>
-                  </div>
-                </div>
-              </div>
+            <div className="pt-6 border-t border-gray-200">
+              <button
+                className="w-full flex items-center justify-start px-4 py-3 text-sm font-medium rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+                onClick={handleLogout}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 mr-3"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Logout
+              </button>
             </div>
           </div>
-        )}
+        </aside>
 
-        {/* Display Posts */}
-        <div className="max-w-7xl mx-auto px-4 py-10">
-      <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-        All Posts
-      </h3>
-
-      {loading ? (
-        <p className="text-center text-lg text-gray-700">Loading posts...</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.length > 0 ? (
-            posts.map((post) => (
-              <div
-                key={post._id}
-                className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:scale-105 border border-gray-200"
+        {/* Main Content - Scrollable */}
+        <main className="flex-1 md:ml-64 p-6 overflow-y-auto">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-bold text-gray-800">Your Feed</h2>
+              <button
+                onClick={() => setIsUploadModalOpen(true)}
+                className="md:hidden flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-md hover:shadow-lg transition-all"
               >
-                {/* User Information */}
-                <div className="mb-4 flex items-center space-x-3">
-                  <span className="text-lg font-semibold text-indigo-600">
-                    Created By:
-                  </span>
-                  <p className="text-gray-800 font-medium">{post.userName}</p>
-                </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>New Post</span>
+              </button>
+            </div>
 
-                {/* Image */}
-                {post.imageUrl && (
-                  <img
-                    src={post.imageUrl}
-                    alt={post.title}
-                    className="w-full h-60 object-cover rounded-xl mb-5 shadow-md"
-                  />
-                )}
-
-                {/* Title */}
-                <h4 className="font-semibold text-gray-900 text-xl mb-3 truncate">
-                  {post.title}
-                </h4>
-
-                {/* Description */}
-                <p className="text-gray-700 text-base mb-4 line-clamp-3">
-                  {post.description}
-                </p>
-
-                {/* Read More Button */}
-                <div className="flex justify-between items-center text-sm text-gray-600">
-                  <button
-                    onClick={handleOpenPostDetailModal}
-                    className="text-indigo-600 hover:text-indigo-800 font-semibold transition-all duration-200"
+            {loading ? (
+              <div className="flex justify-center py-10">
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-purple-500"></div>
+              </div>
+            ) : posts.length > 0 ? (
+              <div className="space-y-6">
+                {posts.map((post) => (
+                  <div
+                    key={post._id}
+                    className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-md transition-shadow"
                   >
-                    Read More →
+                    <div className="p-5 pb-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold text-lg shadow-inner">
+                          {post.userName?.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-800">{post.userName}</p>
+                          <p className="text-xs text-gray-500">
+                            {new Date(post.createdAt).toLocaleDateString(undefined, {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="px-5 pb-4 space-y-5 bg-white shadow-lg rounded-xl">
+  {/* Post Title */}
+  <h3 className="text-xl font-semibold text-gray-900">{post.title}</h3>
+
+  {/* Post Description */}
+  <p className="text-gray-600 text-sm">Description - {truncateText(post.description, 30)}</p>
+
+  {/* Image Section */}
+  {post.imageUrl && (
+    <div className="relative aspect-video rounded-xl overflow-hidden border border-gray-300 shadow-md transition-transform duration-300 hover:shadow-xl  cursor-pointer flex items-center justify-center">
+      <img
+        src={post.imageUrl || "/placeholder.svg"}
+        alt={post.title}
+        className="object-cover  transition-transform duration-300"
+      />
+    </div>
+  )}
+
+  {/* Interaction Buttons */}
+  <div className="flex items-center justify-between pt-3">
+    <div className="flex space-x-6">
+      {/* Like Button */}
+      <button className="flex items-center text-gray-500 hover:text-red-500 transition-all duration-200">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 mr-1.5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <span className="text-sm font-medium">Like</span>
+      </button>
+
+      {/* Comment Button */}
+      <button
+        className="flex items-center text-gray-500 hover:text-blue-500 transition-all duration-200"
+        onClick={() => handleViewAllComment(post._id)}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 mr-1.5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+        </svg>
+        <span className="text-sm font-medium">Comments</span>
+      </button>
+
+      {/* Share Button */}
+      <button className="flex items-center text-gray-500 hover:text-green-500 transition-all duration-200">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 mr-1.5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <circle cx="18" cy="5" r="3"></circle>
+          <circle cx="6" cy="12" r="3"></circle>
+          <circle cx="18" cy="19" r="3"></circle>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+        </svg>
+        <span className="text-sm font-medium">Share</span>
+      </button>
+    </div>
+
+    {/* Read More Button */}
+    <button
+      className="flex items-center text-gray-500 hover:text-purple-500 transition-all duration-200"
+      onClick={handleOpenPostDetailModal}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5 mr-1.5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      <span className="text-sm font-medium">Read More</span>
+    </button>
+  </div>
+</div>
+
+
+                    <hr className="border-gray-100" />
+
+                    <div className="p-5 pt-3">
+                      <div className="w-full space-y-3">
+                        <div className="flex items-center space-x-2">
+                          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold shadow-inner">
+                            {user.name?.charAt(0)}
+                          </div>
+                          <div className="flex-1 flex space-x-2">
+                            <input
+                              type="text"
+                              placeholder="Write a comment..."
+                              value={commentTexts[post._id] || ""}
+                              onChange={(e) => handleCommentChange(e, post._id)}
+                              className="flex-1 text-sm border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            />
+                            <button
+                              onClick={() => handleAddComment(post._id)}
+                              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full p-2 hover:shadow-md transition-shadow"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between">
+                          <button
+                            onClick={() => handleViewAllComment(post._id)}
+                            className="text-sm text-gray-500 hover:text-purple-600 font-medium"
+                          >
+                            View all comments
+                          </button>
+
+                          <button
+                            onClick={() => handleViewCommentsClick(post._id)}
+                            className="text-sm text-gray-500 hover:text-purple-600 font-medium"
+                          >
+                            Edit your comments
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white p-8 text-center rounded-xl shadow-sm border border-gray-100">
+                <div className="flex flex-col items-center justify-center py-12">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-16 w-16 text-gray-300 mb-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                    <polyline points="13 2 13 9 20 9"></polyline>
+                  </svg>
+                  <p className="text-gray-500 mb-4">No posts available at the moment.</p>
+                  <button
+                    onClick={() => setIsUploadModalOpen(true)}
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-full text-sm font-medium shadow-md hover:shadow-lg transition-all"
+                  >
+                    Create Your First Post
                   </button>
                 </div>
-
-                {/* Comment Section */}
-                <div className="mt-6">
-                  <h5 className="text-lg font-semibold text-gray-900 mb-2">
-                    Comments
-                  </h5>
-                  <textarea
-                    placeholder="Write a comment..."
-                    rows="3"
-                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                    value={commentTexts[post._id] || ""}
-                    onChange={(e) => handleCommentChange(e, post._id)}
-                  ></textarea>
-
-                  <div className="flex flex-wrap gap-4 mt-4">
-                    {/* Add Comment Button */}
-                    <button
-                      onClick={() => handleAddComment(post._id)}
-                      className="bg-indigo-600 text-white px-5 py-2 rounded-xl hover:bg-indigo-700 transition-all duration-200"
-                    >
-                      Add Comment
-                    </button>
-
-                    {/* View All Comments Button */}
-                    <button
-                      onClick={() => handleViewAllComment(post._id)}
-                      className="bg-indigo-600 text-white px-5 py-2 rounded-xl hover:bg-indigo-700 transition-all duration-200"
-                    >
-                      View All Comments
-                    </button>
-
-                    {/* Edit Your Comments Button */}
-                    {post && (
-                      <button
-                        onClick={() => handleViewCommentsClick(post._id)}
-                        className="bg-indigo-600 text-white px-5 py-2 rounded-xl hover:bg-indigo-700 transition-all duration-200"
-                      >
-                        Edit Your Comments
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-600 text-center col-span-full">
-              No posts are available at the moment.
-            </p>
-          )}
-        </div>
-      )}
-    </div>
-      </div>
-
-      {/* Sidebar for Notifications */}
-      {isSidebarOpen && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-end items-start z-50">
-          <div className="bg-white p-6 w-80 h-full overflow-y-auto shadow-lg rounded-l-lg">
-            <h3 className="text-xl font-semibold text-gray-700 mb-4">
-              Notifications
-            </h3>
-            <button
-              onClick={() => setIsSidebarOpen(false)}
-              className="absolute top-4 right-4 text-gray-600"
-            >
-              &times;
-            </button>
-            {loading ? (
-              <div>Loading...</div>
-            ) : (
-              <div className="space-y-4">
-                {notifications.length > 0 ? (
-                  notifications.map((notification, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-100 p-4 rounded-lg shadow-md"
-                    >
-                      <h4 className="font-semibold text-gray-800">
-                        {notification.title}
-                      </h4>
-                      <p className="text-gray-600">{notification.message}</p>
-                    </div>
-                  ))
-                ) : (
-                  <p>No notifications available.</p>
-                )}
               </div>
             )}
           </div>
-        </div>
-      )}
-
-      {/* Notification Modal */}
-      {isNotificationsVisible && (
-        <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg w-96 shadow-lg">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">
-                Your Notifications
-              </h3>
-              <button
-                onClick={() => setIsNotificationsVisible(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                X
-              </button>
-            </div>
-            <ul className="list-disc pl-5 space-y-2">
-              {userNotifications.map((notification) => (
-                <li key={notification._id} className="text-gray-700">
-                  <strong>{notification.title}</strong>
-                  <p>{notification.message}</p>
-                  <small>
-                    {new Date(notification.createdAt).toLocaleString()}
-                  </small>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
-
-      {/* Modal for Change Password Form */}
-
-      {isPasswordModalOpen && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-semibold text-center mb-6">
-              Change Password
-            </h2>
-            <form onSubmit={handlePasswordSubmit}>
-              <div className="mb-4">
-                <label
-                  htmlFor="newPassword"
-                  className="block text-sm font-medium"
-                >
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  id="newPassword"
-                  name="newPassword"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full mt-1 p-2 border rounded-md"
-                  placeholder="Enter new password"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium"
-                >
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full mt-1 p-2 border rounded-md"
-                  placeholder="Confirm new password"
-                  required
-                />
-              </div>
-              <div className="flex justify-center">
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
-                >
-                  Change Password
-                </button>
-              </div>
-            </form>
-
-            {/* Close Button */}
-            <div className="flex justify-end mt-4">
-              <button
-                onClick={handlePasswordChangeClose}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-{/* READ MORE BUTON CICK THEN VIEW THIS  */}
-      {isPostDetailModalOpen && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            {loading && <p>Loading post details...</p>}
-            {error && <p className="text-red-500">{error}</p>}
-            {posts && (
-              <>
-                <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                  Post Details
-                </h2>
-                <h4 className="font-semibold text-gray-800 text-xl mb-3">
-                  {posts.title}
-                </h4>
-                <p className="text-gray-600 mb-4">{posts.description}</p>
-                <div className="text-sm text-gray-500 mb-4">
-                  <p>User Namexgdfgfxdzdg: {posts.userName}</p>
-                  <p>
-                    Created At: {new Date(posts.createdAt).toLocaleString()}
-                  </p>
-                  <p>
-                    Updated At: {new Date(posts.updatedAt).toLocaleString()}
-                  </p>
-                </div>
-              </>
-            )}
-
-            {/* Close Button */}
-            <div className="flex justify-end">
-              <button
-                onClick={handleClosePostDetailModal}
-                className="text-gray-500 hover:text-gray-700 font-semibold"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-
-      {/* Modal to display comments */}
-{isCommentsModalOpen && (
-  <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
-    <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-4xl mx-4 flex flex-col md:flex-row">
-      <div className="w-full md:w-1/2 p-4">
-        <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center md:text-left">
-          Edit Your Comments
-        </h3>
-
-        {/* Display all comments */}
-        {userComments.length > 0 ? (
-          userComments.map((comment) => (
-            <div key={comment._id} className="mb-6 p-4 border-b border-gray-300">
-              {/* Edit comment directly in the input field */}
-              <input
-                type="text"
-                className="w-full text-gray-800 border border-gray-400 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={comment.text}
-                onChange={(e) =>
-                  handleEditComment(comment._id, e.target.value)
-                }
-              />
-
-              <div className="flex justify-end mt-4">
-                {/* Button to trigger the update */}
-                <button
-                  onClick={() => handleUpdateComment(selectedPostId, comment._id)}
-                  className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
-                >
-                  Update Comment
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-center text-gray-700">No comments found for this post.</p>
-        )}
+        </main>
       </div>
 
-      <div className="w-full md:w-1/2 p-4 flex flex-col justify-center items-center">
-        {/* Close Modal Button */}
+      {/* Create Post Modal */}
+      {isUploadModalOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+      
+      {/* Modal Header */}
+      <div className="p-6 border-b flex justify-between items-center">
+        <h3 className="text-xl font-semibold text-gray-800">Create New Post</h3>
         <button
-          onClick={closeCommentsModal}
-          className="bg-gray-600 text-white px-5 py-2 mb-4 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-200"
+          onClick={() => setIsUploadModalOpen(false)}
+          className="text-gray-500 hover:text-gray-700 transition"
         >
-          Close
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       </div>
+
+      {/* Scrollable Content */}
+      <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+        <div className="space-y-2">
+          <label htmlFor="title" className="text-sm font-medium text-gray-700">Title</label>
+          <input
+            id="title"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter post title"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor="description" className="text-sm font-medium text-gray-700">Description</label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="What's on your mind?"
+            rows={4}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500"
+          ></textarea>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Image (Optional)</label>
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:bg-gray-50">
+            <input type="file" onChange={handleImageUpload} className="hidden" id="image-upload" accept="image/*" />
+            <label htmlFor="image-upload" className="cursor-pointer flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-10 w-10 text-gray-400 mb-2"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+              <span className="text-sm text-gray-500">{imageUrl ? "Change image" : "Click to upload an image"}</span>
+            </label>
+
+            {imageUrl && (
+              <div className="mt-4 relative aspect-video rounded-lg overflow-hidden">
+                <img src={imageUrl || "/placeholder.svg"} alt="Preview" className="object-cover w-full h-full" />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Modal Footer */}
+      <div className="p-6 border-t flex justify-end space-x-3">
+        <button
+          onClick={() => setIsUploadModalOpen(false)}
+          className="px-5 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleCreatePost}
+          className="px-5 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg text-sm font-medium hover:shadow-md"
+        >
+          Create Post
+        </button>
+      </div>
+
     </div>
   </div>
 )}
 
 
+      {/* Change Password Modal */}
+      {isPasswordModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div className="p-6 border-b">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-semibold text-gray-800">Change Password</h3>
+                <button onClick={handlePasswordChangeClose} className="text-gray-500 hover:text-gray-700">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
 
+            <form onSubmit={handlePasswordSubmit} className="p-6 space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="newPassword" className="text-sm font-medium text-gray-700">
+                  New Password
+                </label>
+                <input
+                  id="newPassword"
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
 
+              <div className="space-y-2">
+                <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
+                  Confirm Password
+                </label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm new password"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
 
-
-      {isPopUpVisible && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md relative">
-            <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl"
-              onClick={() => setIsPopUpVisible(false)}
-            >
-              &times;
-            </button>
-
-            {loadingComments && (
-              <p className="text-center text-gray-600">Loading comments...</p>
-            )}
-            {commentsError && (
-              <p className="text-red-500 text-center">{commentsError}</p>
-            )}
-
-            {!loadingComments && !commentsError && comments.length > 0 ? (
-              <ul className="mt-4 space-y-2">
-                {comments.map((comment, index) => (
-                  <li key={index} className="p-2 border-b border-gray-200">
-                    <strong className="text-gray-800">
-                      {comment.userName}:
-                    </strong>{" "}
-                    <span className="text-gray-600">{comment.text}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              !loadingComments && (
-                <p className="text-center text-gray-500">No comments found.</p>
-              )
-            )}
+              <div className="pt-4 flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={handlePasswordChangeClose}
+                  className="px-5 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg text-sm font-medium hover:shadow-md transition-shadow"
+                >
+                  Change Password
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
 
-      {/* If no comments */}
-      {!loadingComments && comments.length === 0 && !commentsError && (
-        <p className="text-gray-500 mt-3">No comments to display.</p>
+      {/* Notifications Modal */}
+      {isNotificationsVisible && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div className="p-6 border-b">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-semibold text-gray-800">Notifications</h3>
+                <button onClick={() => setIsNotificationsVisible(false)} className="text-gray-500 hover:text-gray-700">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="max-h-[400px] overflow-y-auto p-4">
+              {userNotifications.length > 0 ? (
+                <div className="space-y-4">
+                  {userNotifications.map((notification) => (
+                    <div key={notification._id} className="bg-gray-50 rounded-lg p-4 border-l-4 border-purple-500">
+                      <h4 className="font-medium text-gray-800">{notification.title}</h4>
+                      <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
+                      <p className="text-xs text-gray-400 mt-2">{new Date(notification.createdAt).toLocaleString()}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-12 w-12 text-gray-300 mb-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                  </svg>
+                  <p className="text-gray-500">No notifications available</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Post Detail Modal */}
+      {isPostDetailModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div className="p-6 border-b">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-semibold text-gray-800">Post Details</h3>
+                <button onClick={handleClosePostDetailModal} className="text-gray-500 hover:text-gray-700">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6">
+              {loading ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+                </div>
+              ) : error ? (
+                <p className="text-center text-red-500 py-4">{error}</p>
+              ) : (
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-gray-800">{posts.title}</h3>
+                  <p className="text-gray-700">{posts.description}</p>
+
+                  <div className="text-sm text-gray-500 space-y-1">
+                    <p>Posted by: {posts.userName}</p>
+                    <p>Created: {new Date(posts.createdAt).toLocaleString()}</p>
+                    <p>Updated: {new Date(posts.updatedAt).toLocaleString()}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Comments Modal */}
+      {isCommentsModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+            <div className="p-6 border-b">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-semibold text-gray-800">Edit Your Comments</h3>
+                <button onClick={closeCommentsModal} className="text-gray-500 hover:text-gray-700">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="max-h-[400px] overflow-y-auto p-6">
+              {userComments.length > 0 ? (
+                <div className="space-y-4">
+                  {userComments.map((comment) => (
+                    <div key={comment._id} className="border border-gray-200 p-4 rounded-lg bg-gray-50">
+                      <textarea
+                        value={comment.text}
+                        onChange={(e) => handleEditComment(comment._id, e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      ></textarea>
+                      <div className="flex justify-end">
+                        <button
+                          onClick={() => handleUpdateComment(selectedPostId, comment._id)}
+                          className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg text-sm font-medium hover:shadow-md transition-shadow"
+                        >
+                          Update Comment
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-12 w-12 text-gray-300 mb-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                  <p className="text-gray-500">No comments found for this post</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* All Comments Modal */}
+      {isPopUpVisible && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div className="p-6 border-b">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-semibold text-gray-800">All Comments</h3>
+                <button onClick={() => setIsPopUpVisible(false)} className="text-gray-500 hover:text-gray-700">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="max-h-[400px] overflow-y-auto p-4">
+              {loadingComments ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+                </div>
+              ) : commentsError ? (
+                <p className="text-center text-red-500 py-4">{commentsError}</p>
+              ) : comments.length > 0 ? (
+                <div className="space-y-4">
+                  {comments.map((comment, index) => (
+                    <div key={index} className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold shadow-inner">
+                          {comment.userName?.charAt(0)}
+                        </div>
+                        <span className="font-medium text-gray-800">{comment.userName}</span>
+                      </div>
+                      <p className="text-gray-700 pl-10">{comment.text}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-12 w-12 text-gray-300 mb-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                  <p className="text-gray-500">No comments available</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
 
       <ToastContainer />
     </div>
-  );
-};
+  )
+}
 
-export default Profile;
+export default Profile
