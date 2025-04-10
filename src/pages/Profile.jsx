@@ -31,6 +31,7 @@ const Profile = ({ postId }) => {
   const [loadingComments, setLoadingComments] = useState(false)
   const [commentsError, setCommentsError] = useState(null)
   const navigate = useNavigate()
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const fetchNotifications = async () => {
     try {
@@ -563,115 +564,72 @@ const Profile = ({ postId }) => {
 
       <div className="flex flex-1 relative">
         {/* Fixed Sidebar */}
-        <aside className="hidden md:block w-64 fixed top-[61px] left-0 h-[calc(100vh-61px)] bg-white shadow-lg overflow-y-auto">
-          <div className="p-6 space-y-6">
-            {/* User Profile Section */}
-            <div className="flex flex-col items-center">
-              <div className="h-20 w-20 rounded-full bg-gray-200 overflow-hidden border-4 border-white shadow-md">
-                <img
-                  src={user.profilePic || "/placeholder.svg"}
-                  alt={user.name}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <h2 className="mt-4 text-xl font-bold">{user.name}</h2>
-              <p className="text-sm text-gray-500">{user.email}</p>
-            </div>
+        <button
+        onClick={() => setIsSidebarOpen(true)}
+        className="md:hidden fixed top-4 left-4 bg-purple-600 text-white p-2 rounded-lg shadow-lg z-50 mt-6"
+      >
+        ☰
+      </button>
 
-            {/* Navigation Section */}
-            <div className="space-y-2">
-              <h3 className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-3">Menu</h3>
-              <button
-                className="w-full flex items-center justify-start px-4 py-3 text-sm font-medium rounded-lg bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700 border border-purple-100 hover:from-purple-100 hover:to-pink-100 transition-colors"
-                onClick={() => setIsUploadModalOpen(true)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 mr-3"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                Create Post
-              </button>
-              <button
-                className="w-full flex items-center justify-start px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-100 transition-colors"
-                onClick={gotoview}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 mr-3 text-blue-500"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                </svg>
-                Your Posts
-              </button>
-              <button
-                className="w-full flex items-center justify-start px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-100 transition-colors"
-                onClick={handlePasswordChangeOpen}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 mr-3 text-yellow-500"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-                Change Password
-              </button>
+      {/* Sidebar Container */}
+      <aside
+        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg overflow-y-auto transform transition-transform ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 md:block md:w-64 z-50`}
+      >
+        <div className="p-6 space-y-6">
+          {/* User Profile Section */}
+          <div className="flex flex-col items-center">
+            <div className="h-20 w-20 rounded-full bg-gray-200 overflow-hidden border-4 border-white shadow-md">
+              <img src={user.profilePic || "/placeholder.svg"} alt={user.name} className="h-full w-full object-cover" />
             </div>
-
-            {/* Logout Button */}
-            <div className="pt-6 border-t border-gray-200">
-              <button
-                className="w-full flex items-center justify-start px-4 py-3 text-sm font-medium rounded-lg text-red-600 hover:bg-red-50 transition-colors"
-                onClick={handleLogout}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 mr-3"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                  <polyline points="16 17 21 12 16 7"></polyline>
-                  <line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
-                Logout
-              </button>
-            </div>
+            <h2 className="mt-4 text-xl font-bold">{user.name}</h2>
+            <p className="text-sm text-gray-500">{user.email}</p>
           </div>
-        </aside>
+
+          {/* Navigation Section */}
+          <div className="space-y-2">
+            <h3 className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-3">Menu</h3>
+            <button
+              className="w-full flex items-center justify-start px-4 py-3 text-sm font-medium rounded-lg bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700 border border-purple-100 hover:from-purple-100 hover:to-pink-100 transition-colors"
+              onClick={() => setIsUploadModalOpen(true)}
+            >
+              ➕ Create Post
+            </button>
+            <button className="w-full flex items-center justify-start px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-100 transition-colors" onClick={gotoview}>
+              📝 Your Posts
+            </button>
+            <button className="w-full flex items-center justify-start px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-100 transition-colors" onClick={handlePasswordChangeOpen}>
+              🔑 Change Password
+            </button>
+          </div>
+
+          {/* Logout Button */}
+          <div className="pt-6 border-t border-gray-200">
+            <button
+              className="w-full flex items-center justify-start px-4 py-3 text-sm font-medium rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+              onClick={handleLogout}
+            >
+              🚪 Logout
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* Mobile Sidebar Overlay (Closes Sidebar) */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        ></div>
+      )}
 
         {/* Main Content - Scrollable */}
         <main className="flex-1 md:ml-64 p-6 overflow-y-auto">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-bold text-gray-800">Your Feed</h2>
-              <button
+              {/* <button
                 onClick={() => setIsUploadModalOpen(true)}
                 className="md:hidden flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-md hover:shadow-lg transition-all"
               >
@@ -689,7 +647,7 @@ const Profile = ({ postId }) => {
                   <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
                 <span>New Post</span>
-              </button>
+              </button> */}
             </div>
 
             {loading ? (
