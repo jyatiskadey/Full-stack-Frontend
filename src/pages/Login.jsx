@@ -11,6 +11,7 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
   const navigate = useNavigate();
+  const [isloading,setIsLoading]=useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,7 +22,8 @@ const Login = () => {
     e.preventDefault();
     setMessage("");
     setStatus("");
-
+    setIsLoading(true); // Show loader
+  
     try {
       const response = await fetch("https://social-media-backend-2-xdnp.onrender.com/api/posts/login", {
         method: "POST",
@@ -30,9 +32,9 @@ const Login = () => {
         },
         body: JSON.stringify(formData),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         setMessage(data.message);
         setStatus("success");
@@ -50,8 +52,11 @@ const Login = () => {
       setMessage("An error occurred while logging in. Please try again.");
       setStatus("error");
       toast.error("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="max-w-md mx-auto p-6 mt-24 bg-white shadow-lg rounded-lg border border-gray-200">
@@ -111,8 +116,13 @@ const Login = () => {
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 focus:outline-none transition duration-300"
+          disabled={isloading}
         >
-          Login
+          {isloading ? (
+    <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin" />
+  ) : (
+    "Login"
+  )}
         </button>
       </form>
 
