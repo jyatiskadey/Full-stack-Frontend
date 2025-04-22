@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import GlobalLoader from "./GlobalLoader";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -59,6 +60,11 @@ const Login = () => {
   
 
   return (
+    <>    
+    {/* {isloading && <GlobalLoader/>}
+     */}
+     <GlobalLoader isLoading={isloading} />
+
     <div className="max-w-md mx-auto p-6 mt-24 bg-white shadow-lg rounded-lg border border-gray-200">
       <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
         Welcome Back!
@@ -118,11 +124,7 @@ const Login = () => {
           className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 focus:outline-none transition duration-300"
           disabled={isloading}
         >
-          {isloading ? (
-    <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin" />
-  ) : (
-    "Login"
-  )}
+         login
         </button>
       </form>
 
@@ -155,6 +157,7 @@ const Login = () => {
       {/* ToastContainer is needed to render the toasts */}
       <ToastContainer />
     </div>
+    </>
   );
 };
 
